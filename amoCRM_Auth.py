@@ -10,19 +10,16 @@ class NoCredentialsException(Exception):
 
 
 class AmoCrmAPI:
-    def __init__(self,
-                 /, session: Client,
+    def __init__(self, session: Client,
                  *, config: Optional[AmoCrmConfig] = None,
                  subdomain: Optional[str] = None,
                  client_id: Optional[str] = None,
                  client_secret: Optional[str] = None,
                  refresh_token: Optional[str] = None,
-                 redirect_uri: Optional[str] = None
-                 ):
-        self._config = config or AmoCrmConfig(
-            subdomain=subdomain, client_id=client_id, client_secret=client_secret,
-            redirect_uri=redirect_uri, refresh_token=refresh_token
-        )
+                 redirect_uri: Optional[str] = None):
+
+        self._config = config or AmoCrmConfig(subdomain=subdomain, client_id=client_id, client_secret=client_secret,
+                                              redirect_uri=redirect_uri, refresh_token=refresh_token)
         if not self._config.inited:
             raise NoCredentialsException
 
@@ -44,7 +41,7 @@ class AmoCrmAPI:
 
     @property
     def access_ok(self) -> bool:
-        return 200 <= self._session.get('/api/v4/account').status_code < 300
+        return 200 <= self._session.get('/api/v2/contacts').status_code < 300
 
     def _get_access_token(self, grant_type, code=None) -> None:
         json_ = {
@@ -63,21 +60,21 @@ class AmoCrmAPI:
             self._config.access_token = access_token
             self._config.refresh_token = refresh_token
 
-        def get_refresh_token_via_code(self, code) -> None:
-            '''
-            Метод для получения refresh и access токенов, если предыдущие отозвали
-            :param code: Код авторизации из лич. кабинета amocrm
-            :return:
-            '''
+    def get_refresh_token_via_code(self, code) -> None:
+        '''
+        Метод для получения refresh и access токенов, если предыдущие отозвали
+        :param code: Код авторизации из лич. кабинета amocrm
+        :return:
+        '''
 
-            grant_type = 'authorization_code'
-            self._get_access_token(grant_type, code)
+        grant_type = 'authorization_code'
+        self._get_access_token(grant_type, code)
 
-        def update_access_token(self) -> None:
-            grant_type = 'refresh_token'
-            self._get_access_token(grant_type)
+    def update_access_token(self) -> None:
+        grant_type = 'refresh_token'
+        self._get_access_token(grant_type)
 
-        def get_auth(self):
-            if not self.access_ok:
-                self.update_access_token()
-                self._session.headers.update({'Authorization': f'Bearer {self._config.access_token}'})
+    def get_auth(self):
+        if not self.access_ok:
+            self.update_access_token()
+            self._session.headers.update({'Authorization': f'Bearer {self._config.access_token}'})

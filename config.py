@@ -35,17 +35,3 @@ def load_config(path: Union['str', Path]) -> AmoCrmConfig:
 
 
 
-# headers_ac = {"Authorization": f'Bearer {access_token}'}
-# contact = dict()
-# contact['add'] = {
-#     'name': 'Jason',
-#     'responsible_user_id': 504141,
-#     'created_by': 504141,
-#     'tags': 'important',
-#     'leads_id': ['45615', '43510'],
-#     'company_id': 30615,
-#     'custom_fields': 'df',
-# }
-# print(contact)
-# add_contact = requests.post(URL_ADD_CONTACT, headers=headers_ac, params=params)
-# print(add_contact.text)
